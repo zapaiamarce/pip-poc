@@ -214,7 +214,9 @@ async function openWindowWith(data, mode) {
       floatingWin = await window.documentPictureInPicture.requestWindow({
         width: 380,
         height: Math.min(window.screen.availHeight - 120, 780),
-        preferInitialWindowPlacement: true,
+        // Sin preferInitialWindowPlacement: así el browser recuerda dónde
+        // estaba la PiP la última vez. Arrastrala una vez a la derecha y
+        // en las próximas aperturas va a volver ahí sola.
       });
       floatingKind = mode;
       log("requestWindow resolvió", "ok");
