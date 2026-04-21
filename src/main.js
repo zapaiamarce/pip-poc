@@ -246,6 +246,19 @@ async function openWindowWith(data, mode) {
   floatingWin.document.title = data.title;
   floatingWin.document.body.append(node);
 
+  // Interceptar clicks en links: los abrimos en una tab nueva de la ventana
+  // principal en vez de dejar que la PiP intente navegar (la spec no permite
+  // navegar la PiP, así que muchos browsers simplemente no hacen nada).
+  floatingWin.document.addEventListener("click", (e) => {
+    const anchor = e.target.closest?.("a[href]");
+    if (!anchor) return;
+    const href = anchor.getAttribute("href");
+    if (!href || href.startsWith("#")) return;
+    e.preventDefault();
+    log(`link click → abriendo "${href}" en tab nueva del opener`, "evt");
+    window.open(href, "_blank", "noopener,noreferrer");
+  });
+
   setTimeout(() => probeWindowKind(floatingWin, mode === "popup" ? "popup" : "pip"), 50);
 
   floatingWin.addEventListener("resize", () => {
