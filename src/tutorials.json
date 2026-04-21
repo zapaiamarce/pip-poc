@@ -21,126 +21,122 @@
     ]
   },
 
-  "css-flexbox": {
-    "id": "css-flexbox",
-    "title": "🎨 Flexbox, de 0 a usable",
-    "blurb": "Centrado perfecto, layouts responsivos y los gotchas más comunes.",
-    "badge": "CSS",
-    "duration": "6 min",
+  "chatgpt-library": {
+    "id": "chatgpt-library",
+    "title": "📚 ChatGPT: Library de archivos",
+    "blurb": "La nueva Library guarda automáticamente lo que subís. Probala en 2 minutos.",
+    "badge": "ChatGPT",
+    "duration": "3 min",
     "steps": [
       {
-        "title": "Paso 1 · Qué resuelve Flexbox",
-        "html": "<p>Flexbox es un sistema de layout <strong>unidimensional</strong>: distribuye hijos en una fila <em>o</em> una columna.</p><p>Casos típicos donde brilla:</p><ul><li>Centrar algo horizontal y vertical</li><li>Barra de navegación con logo izquierda / items derecha</li><li>Cards de ancho igual que se adaptan</li></ul><p>Para grillas 2D (filas × columnas) usá <code>grid</code>, no flex.</p>"
+        "title": "Paso 1 · Abrir ChatGPT",
+        "html": "<p>Andá a <a href=\"https://chat.openai.com\" target=\"_blank\">chat.openai.com</a> y loggeate con tu cuenta.</p><p>💡 La Library es un feature nuevo de abril 2026. Si no la ves todavía, puede estar en rollout — probá refresh o cerrar sesión y volver a entrar.</p>"
       },
       {
-        "title": "Paso 2 · El setup mínimo",
-        "html": "<p>Todo empieza en el contenedor padre:</p><pre>.container {\n  display: flex;\n  gap: 1rem;\n}</pre><p>Con eso solo, los hijos pasan a estar en fila y con separación entre sí. <code>gap</code> evita tener que poner márgenes en cada hijo.</p>"
+        "title": "Paso 2 · Subí un archivo cualquiera",
+        "html": "<p>En una conversación nueva, apretá el ícono de clip y subí un PDF, imagen o CSV.</p><p>Preguntale algo simple sobre el contenido (ej. \"resumime esto en 3 bullets\").</p><p>Cerrá la conversación cuando termines — normalmente acá se perdía el archivo.</p>"
       },
       {
-        "title": "Paso 3 · Ejes: main vs cross",
-        "html": "<p>La dirección la elige <code>flex-direction</code>:</p><ul><li><code>row</code> (default) → eje principal es horizontal</li><li><code>column</code> → eje principal es vertical</li></ul><p>El <strong>eje cruzado</strong> es siempre el perpendicular. Entender esto es clave porque <code>justify-content</code> actúa sobre el main y <code>align-items</code> sobre el cross.</p>"
+        "title": "Paso 3 · Abrí la Library",
+        "html": "<p>En el sidebar izquierdo de ChatGPT ahora hay una entrada <strong>\"Library\"</strong>.</p><p>Abrila: vas a ver tu archivo guardado automáticamente ahí, junto con cualquier imagen que hayas generado en conversaciones anteriores.</p>"
       },
       {
-        "title": "Paso 4 · El centrado perfecto",
-        "html": "<p>Tres líneas, para siempre:</p><pre>.container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}</pre><p>Lo que tengas adentro queda centrado. Funciona igual con 1 hijo o con 10.</p>"
+        "title": "Paso 4 · Buscá un archivo viejo",
+        "html": "<p>Usá la barra de búsqueda de la Library. Podés filtrar por nombre, tipo o contenido.</p><p>Hacé click sobre un archivo — te aparece una preview y opciones para reusarlo en una conversación nueva sin tener que re-subirlo.</p>"
       },
       {
-        "title": "Paso 5 · flex: 1 y amigos",
-        "html": "<p>En el hijo, <code>flex: 1</code> es el comodín: \"ocupá todo el espacio disponible\".</p><pre>.sidebar { width: 240px; }\n.content { flex: 1; } /* se estira */</pre><p>Si tenés varios hijos con <code>flex: 1</code>, se reparten el espacio en partes iguales.</p>"
-      },
-      {
-        "title": "Paso 6 · Gotchas comunes",
-        "html": "<p>⚠️ Errores que todos cometimos:</p><ul><li><strong>min-width: 0</strong> — sin esto, un hijo con texto largo puede romper el layout</li><li><strong>flex-wrap: wrap</strong> — por default los hijos no bajan de línea, se encogen</li><li><strong>align-items</strong> va en el padre; <strong>align-self</strong> permite sobreescribir en un hijo específico</li></ul><p>✅ Con estos 6 pasos resolvés el 90% de los layouts.</p>"
+        "title": "Paso 5 · Referenciarlo en un chat nuevo",
+        "html": "<p>Desde la preview del archivo, apretá <strong>\"Use in new chat\"</strong>.</p><p>Se abre una conversación con el archivo ya adjuntado. Probá preguntarle algo que requiera combinarlo con conocimiento nuevo.</p><p>✅ Eso es todo. La Library elimina la fricción de re-subir cosas que ya compartiste antes.</p>"
       }
     ]
   },
 
-  "git-first-pr": {
-    "id": "git-first-pr",
-    "title": "🌿 Git: tu primer PR",
-    "blurb": "Clone, branch, commit, push y PR. Todo el flujo end-to-end.",
-    "badge": "Git",
-    "duration": "5 min",
-    "steps": [
-      {
-        "title": "Paso 1 · Clonar el repo",
-        "html": "<p>Traete el proyecto a tu máquina:</p><pre>git clone git@github.com:usuario/repo.git\ncd repo</pre><p>Verificá que estás en la branch principal:</p><pre>git status\ngit branch</pre>"
-      },
-      {
-        "title": "Paso 2 · Crear una branch",
-        "html": "<p><strong>Nunca trabajes directo sobre <code>main</code>.</strong> Creá una branch descriptiva:</p><pre>git checkout -b fix/login-error</pre><p>Convenciones útiles:</p><ul><li><code>feat/…</code> para features nuevas</li><li><code>fix/…</code> para bugs</li><li><code>chore/…</code> para tareas de mantenimiento</li></ul>"
-      },
-      {
-        "title": "Paso 3 · Hacer cambios y commitear",
-        "html": "<p>Editá archivos normalmente. Cuando quieras guardar progreso:</p><pre>git add archivo.js\ngit commit -m \"fix: corrige validación de email\"</pre><p>El mensaje debe ser claro en presente imperativo (\"fix\", no \"fixed\"). Commits chicos y frecuentes > commits gigantes.</p>"
-      },
-      {
-        "title": "Paso 4 · Push al remoto",
-        "html": "<p>La primera vez usás <code>-u</code> para linkear la branch local con la remota:</p><pre>git push -u origin fix/login-error</pre><p>Para los pushes siguientes alcanza con:</p><pre>git push</pre>"
-      },
-      {
-        "title": "Paso 5 · Abrir el PR",
-        "html": "<p>En la web de GitHub/GitLab te va a aparecer un banner ofreciendo abrir el PR. O con <code>gh</code>:</p><pre>gh pr create --fill</pre><p>Escribí una descripción clara:</p><ul><li><strong>Qué</strong> cambia</li><li><strong>Por qué</strong></li><li><strong>Cómo testearlo</strong></li></ul><p>✅ Listo, tu código está en review.</p>"
-      }
-    ]
-  },
-
-  "vscode-shortcuts": {
-    "id": "vscode-shortcuts",
-    "title": "⚡ VS Code: atajos que valen oro",
-    "blurb": "5 shortcuts que te hacen 2× más rápido escribiendo código.",
-    "badge": "Productividad",
+  "claude-code-recap": {
+    "id": "claude-code-recap",
+    "title": "🔁 Claude Code: /recap y /powerup",
+    "blurb": "Dos slash commands nuevos de abril 2026 que pocos están usando.",
+    "badge": "Claude Code",
     "duration": "4 min",
     "steps": [
       {
-        "title": "Paso 1 · Cmd+P — Ir a archivo",
-        "html": "<p><kbd>Cmd</kbd>+<kbd>P</kbd> (o <kbd>Ctrl</kbd>+<kbd>P</kbd> en Win/Linux)</p><p>Escribí parte del nombre del archivo. Búsqueda fuzzy — no hace falta que sea exacto.</p><p>💡 Tip: escribí <code>@</code> después del nombre para saltar a un símbolo dentro del archivo.</p>"
+        "title": "Paso 1 · Abrir Claude Code",
+        "html": "<p>Abrí la terminal en un proyecto donde ya hayas trabajado antes con Claude Code.</p><pre>cd tu-proyecto\nclaude</pre><p>Si es la primera vez en el repo, primero corré <code>/init</code> para que escriba un CLAUDE.md.</p>"
       },
       {
-        "title": "Paso 2 · Cmd+Shift+P — Paleta de comandos",
-        "html": "<p><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></p><p>El shortcut más importante de VS Code. Desde acá llegás a <em>cualquier</em> feature sin recordar en qué menú estaba.</p><p>Ejemplos útiles:</p><ul><li><code>Format Document</code></li><li><code>Toggle Word Wrap</code></li><li><code>Git: Checkout to…</code></li></ul>"
+        "title": "Paso 2 · /resume una sesión vieja",
+        "html": "<p>Dentro de Claude Code escribí:</p><pre>/resume</pre><p>Te lista las sesiones recientes del directorio actual. Elegí una de hace unos días — sirve para demostrar el punto.</p>"
       },
       {
-        "title": "Paso 3 · Cmd+D — Multi-cursor inteligente",
-        "html": "<p><kbd>Cmd</kbd>+<kbd>D</kbd></p><p>Seleccioná una palabra. Apretá Cmd+D → seleccionás la próxima ocurrencia. Repetilo para ir acumulando.</p><p>Después editás todas a la vez. Ideal para renames chicos sin recurrir al Find & Replace.</p><p>💡 Si necesitás seleccionar <em>todas</em> de una, usá <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd>.</p>"
+        "title": "Paso 3 · Probá /recap",
+        "html": "<p>En esa sesión resumida, escribí:</p><pre>/recap</pre><p>Claude te tira un resumen de <em>en qué estabas</em>, qué archivos tocó y qué quedó pendiente. Es lo que normalmente hacías a mano re-leyendo el transcript.</p><p>💡 Podés habilitarlo automático en <code>/config</code> para que aparezca al inicio de cada sesión.</p>"
       },
       {
-        "title": "Paso 4 · Cmd+Click — Go to definition",
-        "html": "<p><kbd>Cmd</kbd>+<kbd>Click</kbd> sobre cualquier símbolo → saltás a su definición.</p><p><kbd>Ctrl</kbd>+<kbd>-</kbd> (macOS) o <kbd>Alt</kbd>+<kbd>←</kbd> → volver atrás.</p><p>Básicamente navegás el código como si fueran links.</p>"
+        "title": "Paso 4 · Descubrí features con /powerup",
+        "html": "<p>Nuevo de abril 2026:</p><pre>/powerup</pre><p>Te lanza lecciones interactivas cortas con demos animadas sobre features que probablemente no sabías que Claude Code tiene (hooks, skills, permisos, memory).</p><p>Es literalmente un tutorial hands-on <em>adentro</em> de Claude Code — muy meta para el POC que estamos probando ahora.</p>"
       },
       {
-        "title": "Paso 5 · Cmd+/ — Comentar",
-        "html": "<p><kbd>Cmd</kbd>+<kbd>/</kbd></p><p>Comenta/descomenta la línea actual o la selección. VS Code detecta el lenguaje y usa la sintaxis correcta.</p><p>Para comentarios de bloque: <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>.</p><p>✅ Con estos 5 ya sos otro developer.</p>"
+        "title": "Paso 5 · /init si el repo es nuevo",
+        "html": "<p>Si estás en un repo sin CLAUDE.md:</p><pre>/init</pre><p>Claude escanea el codebase, infiere convenciones (stack, linting, test framework) y escribe un CLAUDE.md de arranque que vos después editás.</p><p>✅ Estos 4 comandos cubren el 80% del flujo de arranque en cualquier proyecto.</p>"
       }
     ]
   },
 
-  "docker-intro": {
-    "id": "docker-intro",
-    "title": "🐳 Docker en 5 minutos",
-    "blurb": "Del Dockerfile a un contenedor corriendo en tu máquina.",
-    "badge": "DevOps",
+  "cursor-3-agents": {
+    "id": "cursor-3-agents",
+    "title": "🤖 Cursor 3: Agents en paralelo",
+    "blurb": "El nuevo layout de agents de Cursor 3 (abril 2026). Corré 3 tareas a la vez.",
+    "badge": "Cursor",
     "duration": "5 min",
     "steps": [
       {
-        "title": "Paso 1 · ¿Qué es una imagen?",
-        "html": "<p>Una <strong>imagen</strong> es una snapshot de todo lo necesario para correr tu app: sistema, dependencias, código.</p><p>Un <strong>contenedor</strong> es una instancia corriendo de esa imagen.</p><p>Analogía: imagen = clase, contenedor = objeto instanciado.</p>"
+        "title": "Paso 1 · Actualizar a Cursor 3",
+        "html": "<p>Si tenés Cursor abierto, cerralo y volvé a abrirlo — debería auto-actualizarse a <strong>Cursor 3</strong> (lanzado 2 de abril 2026).</p><p>Verificá en <code>Cursor → About</code> que sea la versión 3.x.</p><p>Si no, descargalo de <a href=\"https://cursor.com\" target=\"_blank\">cursor.com</a>.</p>"
       },
       {
-        "title": "Paso 2 · Tu primer Dockerfile",
-        "html": "<p>Archivo <code>Dockerfile</code> en la raíz del proyecto:</p><pre>FROM node:20-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm install\nCOPY . .\nCMD [\"node\", \"server.js\"]</pre><p>Cada línea es una <em>capa</em>. Ordená de menos a más volátil para aprovechar el cache.</p>"
+        "title": "Paso 2 · Abrir el Agents Window",
+        "html": "<p>En Cursor 3 hay un botón nuevo de <strong>Agents</strong> en la sidebar (ícono de robotito).</p><p>Al abrirlo ves un workspace dedicado con tiles — cada tile es un agente independiente.</p>"
       },
       {
-        "title": "Paso 3 · Buildear la imagen",
-        "html": "<pre>docker build -t mi-app .</pre><p>El punto final es el contexto (la carpeta actual). <code>-t</code> es el tag con el que nombrás la imagen.</p><p>Verificá con:</p><pre>docker images</pre>"
+        "title": "Paso 3 · Lanzar 2 agentes en paralelo",
+        "html": "<p>Apretá <strong>New agent</strong>. Dale una tarea concreta (ej. \"refactor the auth middleware to use the new session API\").</p><p>Apretá otra vez <strong>New agent</strong> y dale una tarea distinta e independiente (ej. \"add unit tests for utils/date.ts\").</p><p>Las dos corren en paralelo en tiles separados. Podés ver el progreso de cada una sin cambiar de tab.</p>"
       },
       {
-        "title": "Paso 4 · Correr el contenedor",
-        "html": "<pre>docker run -p 3000:3000 --name mi-app-1 mi-app</pre><p>Flags clave:</p><ul><li><code>-p host:container</code> → mapea puertos</li><li><code>-d</code> → corre en background</li><li><code>--name</code> → nombre para referenciarlo después</li><li><code>-e KEY=val</code> → env vars</li></ul>"
+        "title": "Paso 4 · Split view para comparar outputs",
+        "html": "<p>Arrastrá un tile al costado del otro para activar el split view.</p><p>Ideal cuando querés probar <em>dos approaches distintos</em> al mismo problema: lanzás el mismo prompt en 2 agentes con seteos diferentes y comparás outputs lado a lado.</p>"
       },
       {
-        "title": "Paso 5 · Comandos de supervivencia",
-        "html": "<pre>docker ps           # contenedores corriendo\ndocker logs &lt;name&gt;  # ver output\ndocker exec -it &lt;name&gt; sh  # entrar a shell\ndocker stop &lt;name&gt;  # parar\ndocker rm &lt;name&gt;    # borrar</pre><p>✅ Con esto ya podés dockerizar cualquier app Node/Python/Go básica.</p>"
+        "title": "Paso 5 · Design Mode sobre la UI",
+        "html": "<p>Si tu proyecto tiene UI, abrí un componente y activá <strong>Design Mode</strong> (botón en la toolbar del editor).</p><p>Clickeá un elemento visual (ej. un botón), escribí en lenguaje natural \"hacelo más grande y rojo\" — Cursor edita el CSS/JSX automáticamente.</p><p>✅ Con esto ya usaste las 3 features core de Cursor 3.</p>"
+      }
+    ]
+  },
+
+  "notebooklm-interactive": {
+    "id": "notebooklm-interactive",
+    "title": "🎧 NotebookLM: Audio Overviews interactivos",
+    "blurb": "Interrumpí a los hosts del podcast AI y hacé preguntas en vivo.",
+    "badge": "NotebookLM",
+    "duration": "4 min",
+    "steps": [
+      {
+        "title": "Paso 1 · Crear un notebook nuevo",
+        "html": "<p>Andá a <a href=\"https://notebooklm.google.com\" target=\"_blank\">notebooklm.google.com</a> y apretá <strong>New Notebook</strong>.</p><p>Agregá 1-2 fuentes: pueden ser PDFs, sitios web, o Google Docs. Para la prueba alcanza con un paper o artículo largo.</p>"
+      },
+      {
+        "title": "Paso 2 · Generar Audio Overview",
+        "html": "<p>En el panel de la derecha apretá <strong>Audio Overview</strong> → <strong>Generate</strong>.</p><p>Tarda unos minutos. NotebookLM arma un podcast de 2 voces que discuten tus fuentes.</p><p>💡 Mientras se genera, andá al paso 3.</p>"
+      },
+      {
+        "title": "Paso 3 · Entrar en Interactive Mode",
+        "html": "<p>Cuando el audio esté listo, en vez del play normal apretá <strong>Interactive Mode</strong>.</p><p>Empieza a reproducir. Vas a ver un botón <strong>\"Join\"</strong> o similar — es tu \"raise hand\".</p>"
+      },
+      {
+        "title": "Paso 4 · Interrumpir y preguntar",
+        "html": "<p>En cualquier momento apretá el botón de join y hablá (o escribí) tu pregunta.</p><p>Ejemplos:</p><ul><li>\"Profundizá sobre ese tercer punto que mencionaron\"</li><li>\"¿Cómo se relaciona esto con X?\"</li><li>\"Dame un ejemplo concreto\"</li></ul><p>Los hosts te responden usando tus fuentes y después retoman.</p>"
+      },
+      {
+        "title": "Paso 5 · Bonus — Infographic en vivo",
+        "html": "<p>Volvé al notebook. En la sección de <strong>Studio</strong> apretá <strong>Infographic</strong>.</p><p>💡 Tip de abril 2026: si agregás un brand guideline como source y escribís \"Follow the attached brand guideline for colors, fonts, and design style\", NotebookLM matchea el output a tu branding.</p><p>✅ Listo. Acabás de usar el feature más infravalorado de NotebookLM.</p>"
       }
     ]
   }
