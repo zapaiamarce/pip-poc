@@ -85,6 +85,37 @@ main {
 .tutorial-footer { display: flex; flex-direction: column; gap: .5rem; }
 .tutorial-footer button { flex: 1; }
 
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: .75rem;
+  margin: 1rem 0;
+}
+.card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color .15s, transform .05s;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.card:hover { border-color: var(--accent); }
+.card:active { transform: translateY(1px); }
+.card h4 { margin: 0 0 .4rem; font-size: 1rem; }
+.card p { margin: 0; color: var(--fg-dim); font-size: .85rem; }
+.card-badge {
+  display: inline-block;
+  font-size: .7rem;
+  color: var(--accent);
+  background: rgba(124,156,255,.1);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: .6rem;
+}
+
 .log-panel {
   margin-top: 1rem;
   background: var(--panel-2);

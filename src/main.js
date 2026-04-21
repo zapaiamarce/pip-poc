@@ -1,38 +1,90 @@
-const steps = [
-  {
-    title: "Paso 1 · Introducción",
-    html: `
-      <p>Bienvenido al tutorial de prueba. Esta ventana puede despegarse y
-      quedar siempre visible encima de cualquier otra aplicación.</p>
-      <p>Cuando estés listo, apretá <strong>Siguiente</strong>.</p>
-    `,
+// --- Catálogo de tutoriales ------------------------------------------------
+// Cada tutorial es data pura. La vista se construye al vuelo cuando el usuario
+// hace clic en una card. Ningún DOM se renderiza hasta ese momento.
+const tutorials = {
+  default: {
+    title: "Tutorial de ejemplo",
+    steps: [
+      {
+        title: "Paso 1 · Introducción",
+        html: `<p>Bienvenido al tutorial de prueba. Esta ventana puede despegarse y quedar siempre visible encima de cualquier otra aplicación.</p><p>Cuando estés listo, apretá <strong>Siguiente</strong>.</p>`,
+      },
+      {
+        title: "Paso 2 · Desarrollo",
+        html: `<p>Ahora cambiá a otra tab o ventana. La ventanita flotante debería seguirte y mantenerse encima.</p><p>Probá redimensionarla, moverla, y usar los botones de Anterior / Siguiente desde adentro.</p>`,
+      },
+      {
+        title: "Paso 3 · Conclusión",
+        html: `<p>Eso es todo. Cerrá la ventanita (o volvé a la tab original) y el tutorial va a volver a su lugar.</p><p>✅ POC funcionando.</p>`,
+      },
+    ],
   },
-  {
-    title: "Paso 2 · Desarrollo",
-    html: `
-      <p>Ahora cambiá a otra tab o ventana. La ventanita flotante debería
-      seguirte y mantenerse encima.</p>
-      <p>Probá redimensionarla, moverla, y usar los botones de Anterior /
-      Siguiente desde adentro.</p>
-    `,
+  css: {
+    title: "Flexbox en 3 pasos",
+    blurb: "Bases de display: flex con ejemplos simples.",
+    badge: "CSS",
+    steps: [
+      {
+        title: "Paso 1 · display: flex",
+        html: `<p>Aplicá <code>display: flex</code> al contenedor padre. Sus hijos se alinean en fila por defecto.</p><pre>.container { display: flex; }</pre>`,
+      },
+      {
+        title: "Paso 2 · justify-content",
+        html: `<p>Controla la distribución horizontal:</p><ul><li><code>flex-start</code> (default)</li><li><code>center</code></li><li><code>space-between</code></li><li><code>space-around</code></li></ul>`,
+      },
+      {
+        title: "Paso 3 · align-items",
+        html: `<p>Controla la alineación vertical. <code>center</code> centra todos los hijos en el eje cruzado.</p><p>✅ Eso es todo para empezar con flex.</p>`,
+      },
+    ],
   },
-  {
-    title: "Paso 3 · Conclusión",
-    html: `
-      <p>Eso es todo. Cerrá la ventanita (o volvé a la tab original) y el
-      tutorial va a volver a su lugar.</p>
-      <p>✅ POC funcionando.</p>
-    `,
+  git: {
+    title: "Tu primer commit",
+    blurb: "Del clone al push, sin dramas.",
+    badge: "Git",
+    steps: [
+      {
+        title: "Paso 1 · Clone",
+        html: `<p>Copiá el repo localmente:</p><pre>git clone &lt;url&gt;
+cd &lt;repo&gt;</pre>`,
+      },
+      {
+        title: "Paso 2 · Cambios + commit",
+        html: `<p>Editá archivos, después:</p><pre>git add .
+git commit -m "mi cambio"</pre>`,
+      },
+      {
+        title: "Paso 3 · Push",
+        html: `<p>Subilo al remoto:</p><pre>git push</pre><p>✅ Listo, tu cambio está en el origen.</p>`,
+      },
+    ],
   },
-];
+  shortcuts: {
+    title: "Atajos de VS Code",
+    blurb: "3 shortcuts que te cambian la vida.",
+    badge: "Productividad",
+    steps: [
+      {
+        title: "Paso 1 · Cmd+P",
+        html: `<p><strong>Cmd+P</strong> (Ctrl+P en Windows/Linux): buscar archivo por nombre. Rápido y fuzzy.</p>`,
+      },
+      {
+        title: "Paso 2 · Cmd+Shift+P",
+        html: `<p><strong>Cmd+Shift+P</strong>: paleta de comandos. Desde acá llegás a <em>cualquier</em> feature del editor sin recordar dónde está en los menús.</p>`,
+      },
+      {
+        title: "Paso 3 · Cmd+D",
+        html: `<p><strong>Cmd+D</strong>: selecciona la próxima ocurrencia de lo que tenés resaltado. Apretalo varias veces → multi-cursor instantáneo.</p><p>✅ Dominá estos tres y ya sos otro developer.</p>`,
+      },
+    ],
+  },
+};
 
-let current = 0;
 let floatingWin = null;
-let floatingKind = null; // "pip" | "popup"
+let floatingKind = null; // "pip" | "popup" | "pip-meet"
 
 const $ = (sel, root = document) => root.querySelector(sel);
-const host = $("#host");
-const tutorial = $("#tutorial");
+const tutorial = $("#tutorial"); // tutorial default de la página principal
 const supportWarning = $("#support-warning");
 const logEl = $("#log");
 
@@ -57,23 +109,81 @@ log(`documentPictureInPicture API: ${"documentPictureInPicture" in window ? "dis
 log(`User agent: ${navigator.userAgent}`);
 
 // --- tutorial UI -----------------------------------------------------------
-function render() {
-  $("#step-title", tutorial).textContent = steps[current].title;
-  $("#step-body", tutorial).innerHTML = steps[current].html;
-  $("#step-indicator", tutorial).textContent = `${current + 1} / ${steps.length}`;
-  $("#prev-btn", tutorial).disabled = current === 0;
-  $("#next-btn", tutorial).disabled = current === steps.length - 1;
+// Construye un nodo de tutorial con sus propios controles y estado.
+function buildTutorialNode(data) {
+  const root = document.createElement("article");
+  root.className = "tutorial";
+  root.innerHTML = `
+    <div class="tutorial-head">
+      <h2 class="t-title"></h2>
+      <span class="t-indicator indicator"></span>
+    </div>
+    <div class="t-body step-body"></div>
+    <div class="tutorial-controls">
+      <button class="t-prev" type="button">← Anterior</button>
+      <button class="t-next" type="button">Siguiente →</button>
+    </div>
+  `;
+
+  let current = 0;
+  const titleEl = root.querySelector(".t-title");
+  const bodyEl = root.querySelector(".t-body");
+  const indEl = root.querySelector(".t-indicator");
+  const prevBtn = root.querySelector(".t-prev");
+  const nextBtn = root.querySelector(".t-next");
+
+  const render = () => {
+    const s = data.steps[current];
+    titleEl.textContent = s.title;
+    bodyEl.innerHTML = s.html;
+    indEl.textContent = `${current + 1} / ${data.steps.length}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === data.steps.length - 1;
+  };
+
+  prevBtn.addEventListener("click", () => { if (current > 0) { current--; render(); log(`step → ${current + 1}`, "evt"); } });
+  nextBtn.addEventListener("click", () => { if (current < data.steps.length - 1) { current++; render(); log(`step → ${current + 1}`, "evt"); } });
+
+  render();
+  return root;
 }
 
-tutorial.addEventListener("click", (e) => {
-  const t = e.target;
-  if (!(t instanceof HTMLElement)) return;
-  if (t.id === "prev-btn" && current > 0) { current--; render(); log(`step → ${current + 1}`, "evt"); }
-  if (t.id === "next-btn" && current < steps.length - 1) { current++; render(); log(`step → ${current + 1}`, "evt"); }
-  if (t.id === "pip-btn") openPiP();
-  if (t.id === "popup-btn") openPopup();
-  if (t.id === "pip-meet-btn") openPiPMeetStyle();
-});
+// Wire del tutorial default (el de arriba, con los 3 botones de test)
+const defaultRoot = buildTutorialNode(tutorials.default);
+tutorial.replaceChildren(...defaultRoot.childNodes);
+// botones de apertura viven dentro del <article id="tutorial"> existente
+const footer = document.createElement("div");
+footer.className = "tutorial-footer";
+footer.innerHTML = `
+  <button id="pip-btn" type="button" class="primary">📌 Abrir en PiP</button>
+  <button id="popup-btn" type="button">🪟 Abrir como popup (window.open)</button>
+  <button id="pip-meet-btn" type="button">🎵 Abrir PiP al estilo Meet (audio + MediaSession)</button>
+`;
+tutorial.appendChild(footer);
+
+$("#pip-btn").addEventListener("click", () => openPiP(tutorials.default));
+$("#popup-btn").addEventListener("click", () => openPopup(tutorials.default));
+$("#pip-meet-btn").addEventListener("click", () => openPiPMeetStyle(tutorials.default));
+
+// --- Galería ---------------------------------------------------------------
+const gallery = $("#gallery");
+Object.entries(tutorials)
+  .filter(([key]) => key !== "default")
+  .forEach(([key, data]) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "card";
+    card.innerHTML = `
+      <h4></h4>
+      <p></p>
+      <span class="card-badge"></span>
+    `;
+    card.querySelector("h4").textContent = data.title;
+    card.querySelector("p").textContent = data.blurb;
+    card.querySelector(".card-badge").textContent = data.badge;
+    card.addEventListener("click", () => openPiPMeetStyle(data));
+    gallery.appendChild(card);
+  });
 
 // --- shared helpers --------------------------------------------------------
 function copyStylesTo(targetDoc) {
@@ -115,63 +225,8 @@ function probeWindowKind(win, expected) {
   }
 }
 
-function attachCloseHandler(win, evtName) {
-  win.addEventListener(evtName, () => {
-    log(`evento '${evtName}' → restaurando tutorial al host`, "evt");
-    host.append(tutorial);
-    floatingWin = null;
-    floatingKind = null;
-  });
-}
-
-// --- Document PiP ----------------------------------------------------------
-async function openPiP() {
-  if (!("documentPictureInPicture" in window)) {
-    supportWarning.hidden = false;
-    log("openPiP: API no disponible", "err");
-    return;
-  }
-  if (floatingWin) { log("ya hay una ventana flotante abierta"); floatingWin.focus?.(); return; }
-
-  try {
-    log("llamando a documentPictureInPicture.requestWindow(...)", "evt");
-    floatingWin = await window.documentPictureInPicture.requestWindow({
-      width: 380,
-      height: Math.min(window.screen.availHeight - 120, 780),
-      preferInitialWindowPlacement: true,
-    });
-    floatingKind = "pip";
-    log("requestWindow resolvió: ventana creada", "ok");
-
-    copyStylesTo(floatingWin.document);
-    floatingWin.document.title = "Tutorial";
-    floatingWin.document.body.append(tutorial);
-
-    // pequeño delay para que el display-mode se estabilice
-    setTimeout(() => probeWindowKind(floatingWin, "pip"), 50);
-
-    floatingWin.addEventListener("resize", () => {
-      log(`resize: ${floatingWin.innerWidth}×${floatingWin.innerHeight}`, "evt");
-    });
-    attachCloseHandler(floatingWin, "pagehide");
-  } catch (err) {
-    log(`requestWindow falló: ${err.name}: ${err.message}`, "err");
-    floatingWin = null;
-  }
-}
-
-// --- PiP "estilo Meet": audio + Media Session ------------------------------
-// Hipótesis: Arc mantiene la PiP always-on-top solo cuando la tab es tratada
-// como una "media app" (Meet lo logra con getUserMedia; acá lo intentamos con
-// un <audio> silencioso en loop + handlers de Media Session registrados
-// ANTES de llamar a requestWindow).
-async function openPiPMeetStyle() {
-  if (!("documentPictureInPicture" in window)) {
-    log("openPiPMeetStyle: API no disponible", "err");
-    return;
-  }
-  if (floatingWin) { log("ya hay una ventana flotante abierta"); return; }
-
+// --- Media Session setup (opcional, para PiP estilo Meet) ------------------
+async function primeMediaSession(data) {
   const audio = $("#silent-audio");
   try {
     await audio.play();
@@ -179,117 +234,105 @@ async function openPiPMeetStyle() {
   } catch (err) {
     log(`audio.play() falló: ${err.message} — seguimos igual`, "err");
   }
-
-  // Metadata ayuda a que el browser considere la tab como media app
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: "Tutorial",
+      title: data.title,
       artist: "PiP POC",
     });
     navigator.mediaSession.playbackState = "playing";
-
     const register = (action, fn) => {
-      try {
-        navigator.mediaSession.setActionHandler(action, fn);
-        log(`mediaSession action registrada: ${action}`, "ok");
-      } catch {
-        log(`mediaSession action no soportada: ${action}`);
-      }
+      try { navigator.mediaSession.setActionHandler(action, fn); }
+      catch { /* ignorar acciones no soportadas */ }
     };
     register("play", () => audio.play());
     register("pause", () => audio.pause());
-    register("previoustrack", () => { if (current > 0) { current--; render(); } });
-    register("nexttrack", () => { if (current < steps.length - 1) { current++; render(); } });
-    // previousslide/nextslide son las "correctas" para este caso de uso
-    register("previousslide", () => { if (current > 0) { current--; render(); } });
-    register("nextslide", () => { if (current < steps.length - 1) { current++; render(); } });
-    register("enterpictureinpicture", () => openPiPMeetStyle());
   }
-
-  try {
-    log("requestWindow con tab marcada como media app…", "evt");
-    floatingWin = await window.documentPictureInPicture.requestWindow({
-      width: 380,
-      height: Math.min(window.screen.availHeight - 120, 780),
-      preferInitialWindowPlacement: true,
-    });
-    floatingKind = "pip-meet";
-    log("requestWindow resolvió", "ok");
-
-    copyStylesTo(floatingWin.document);
-    floatingWin.document.title = "Tutorial";
-    floatingWin.document.body.append(tutorial);
-
-    setTimeout(() => probeWindowKind(floatingWin, "pip"), 50);
-
-    floatingWin.addEventListener("resize", () => {
-      log(`resize: ${floatingWin.innerWidth}×${floatingWin.innerHeight}`, "evt");
-    });
-    floatingWin.addEventListener("pagehide", () => {
-      log("pagehide → restaurando", "evt");
-      host.append(tutorial);
-      floatingWin = null;
-      floatingKind = null;
-      audio.pause();
-    });
-  } catch (err) {
-    log(`requestWindow falló: ${err.name}: ${err.message}`, "err");
-    floatingWin = null;
-  }
+  return audio;
 }
 
-// --- window.open fallback --------------------------------------------------
-function openPopup() {
+// --- Opener unificado ------------------------------------------------------
+// Construye un nodo fresco de tutorial, abre una ventana (PiP o popup) y
+// mete el nodo adentro. `mode`: "pip" (Document PiP simple), "pip-meet"
+// (Document PiP + audio/MediaSession), "popup" (window.open).
+async function openWindowWith(data, mode) {
   if (floatingWin) { log("ya hay una ventana flotante abierta"); floatingWin.focus?.(); return; }
 
-  const w = 380;
-  const h = Math.min(window.screen.availHeight, 800);
-  // window.open sí acepta left/top (son hints, cada navegador decide)
-  const left = window.screen.availWidth - w;
-  const top = 0;
-  const features = `popup=yes,width=${w},height=${h},left=${left},top=${top}`;
+  const node = buildTutorialNode(data);
+  let audio = null;
 
-  log(`llamando a window.open con features="${features}"`, "evt");
-  floatingWin = window.open("about:blank", "pip-poc-popup", features);
-  if (!floatingWin) {
-    log("window.open devolvió null (bloqueado por popup blocker?)", "err");
-    return;
+  if (mode === "pip" || mode === "pip-meet") {
+    if (!("documentPictureInPicture" in window)) {
+      supportWarning.hidden = false;
+      log(`${mode}: API no disponible`, "err");
+      return;
+    }
+    if (mode === "pip-meet") audio = await primeMediaSession(data);
+
+    try {
+      log(`requestWindow (${mode}) para "${data.title}"…`, "evt");
+      floatingWin = await window.documentPictureInPicture.requestWindow({
+        width: 380,
+        height: Math.min(window.screen.availHeight - 120, 780),
+        preferInitialWindowPlacement: true,
+      });
+      floatingKind = mode;
+      log("requestWindow resolvió", "ok");
+    } catch (err) {
+      log(`requestWindow falló: ${err.name}: ${err.message}`, "err");
+      floatingWin = null;
+      return;
+    }
+  } else if (mode === "popup") {
+    const w = 380;
+    const h = Math.min(window.screen.availHeight, 800);
+    const left = window.screen.availWidth - w;
+    const features = `popup=yes,width=${w},height=${h},left=${left},top=0`;
+    log(`window.open features="${features}" para "${data.title}"`, "evt");
+    floatingWin = window.open("about:blank", `pip-poc-${Date.now()}`, features);
+    if (!floatingWin) {
+      log("window.open devolvió null (popup blocker?)", "err");
+      return;
+    }
+    floatingKind = "popup";
+    floatingWin.document.open();
+    floatingWin.document.write(`<!doctype html><html><head><title>${data.title}</title></head><body></body></html>`);
+    floatingWin.document.close();
   }
-  floatingKind = "popup";
-  log("window.open resolvió: ventana creada", "ok");
-
-  // Preparar el documento de la ventana
-  floatingWin.document.open();
-  floatingWin.document.write(`<!doctype html><html><head><title>Tutorial</title></head><body></body></html>`);
-  floatingWin.document.close();
 
   copyStylesTo(floatingWin.document);
-  floatingWin.document.body.append(tutorial);
+  floatingWin.document.title = data.title;
+  floatingWin.document.body.append(node);
 
-  setTimeout(() => probeWindowKind(floatingWin, "popup"), 50);
+  setTimeout(() => probeWindowKind(floatingWin, mode === "popup" ? "popup" : "pip"), 50);
 
   floatingWin.addEventListener("resize", () => {
     log(`resize: ${floatingWin.innerWidth}×${floatingWin.innerHeight}`, "evt");
   });
-  // Detectar cierre: pagehide en la propia ventana + polling como red de seguridad
-  attachCloseHandler(floatingWin, "pagehide");
-  const poll = setInterval(() => {
-    if (!floatingWin || floatingWin.closed) {
-      clearInterval(poll);
-      if (floatingWin) {
-        log("popup cerrado (polling) → restaurando tutorial", "evt");
-        host.append(tutorial);
-        floatingWin = null;
-        floatingKind = null;
+
+  const cleanup = () => {
+    log("ventana cerrada → limpiando", "evt");
+    floatingWin = null;
+    floatingKind = null;
+    if (audio) audio.pause();
+  };
+  floatingWin.addEventListener("pagehide", cleanup);
+
+  if (mode === "popup") {
+    const poll = setInterval(() => {
+      if (!floatingWin || floatingWin.closed) {
+        clearInterval(poll);
+        if (floatingWin) cleanup();
       }
-    }
-  }, 500);
+    }, 500);
+  }
 }
+
+function openPiP(data) { return openWindowWith(data, "pip"); }
+function openPiPMeetStyle(data) { return openWindowWith(data, "pip-meet"); }
+function openPopup(data) { return openWindowWith(data, "popup"); }
 
 // --- init ------------------------------------------------------------------
 if (!("documentPictureInPicture" in window)) {
   supportWarning.hidden = false;
   $("#pip-btn").disabled = true;
 }
-
-render();
