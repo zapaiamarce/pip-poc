@@ -1,84 +1,10 @@
 // --- Catálogo de tutoriales ------------------------------------------------
-// Cada tutorial es data pura. La vista se construye al vuelo cuando el usuario
-// hace clic en una card. Ningún DOM se renderiza hasta ese momento.
-const tutorials = {
-  default: {
-    title: "Tutorial de ejemplo",
-    steps: [
-      {
-        title: "Paso 1 · Introducción",
-        html: `<p>Bienvenido al tutorial de prueba. Esta ventana puede despegarse y quedar siempre visible encima de cualquier otra aplicación.</p><p>Cuando estés listo, apretá <strong>Siguiente</strong>.</p>`,
-      },
-      {
-        title: "Paso 2 · Desarrollo",
-        html: `<p>Ahora cambiá a otra tab o ventana. La ventanita flotante debería seguirte y mantenerse encima.</p><p>Probá redimensionarla, moverla, y usar los botones de Anterior / Siguiente desde adentro.</p>`,
-      },
-      {
-        title: "Paso 3 · Conclusión",
-        html: `<p>Eso es todo. Cerrá la ventanita (o volvé a la tab original) y el tutorial va a volver a su lugar.</p><p>✅ POC funcionando.</p>`,
-      },
-    ],
-  },
-  css: {
-    title: "Flexbox en 3 pasos",
-    blurb: "Bases de display: flex con ejemplos simples.",
-    badge: "CSS",
-    steps: [
-      {
-        title: "Paso 1 · display: flex",
-        html: `<p>Aplicá <code>display: flex</code> al contenedor padre. Sus hijos se alinean en fila por defecto.</p><pre>.container { display: flex; }</pre>`,
-      },
-      {
-        title: "Paso 2 · justify-content",
-        html: `<p>Controla la distribución horizontal:</p><ul><li><code>flex-start</code> (default)</li><li><code>center</code></li><li><code>space-between</code></li><li><code>space-around</code></li></ul>`,
-      },
-      {
-        title: "Paso 3 · align-items",
-        html: `<p>Controla la alineación vertical. <code>center</code> centra todos los hijos en el eje cruzado.</p><p>✅ Eso es todo para empezar con flex.</p>`,
-      },
-    ],
-  },
-  git: {
-    title: "Tu primer commit",
-    blurb: "Del clone al push, sin dramas.",
-    badge: "Git",
-    steps: [
-      {
-        title: "Paso 1 · Clone",
-        html: `<p>Copiá el repo localmente:</p><pre>git clone &lt;url&gt;
-cd &lt;repo&gt;</pre>`,
-      },
-      {
-        title: "Paso 2 · Cambios + commit",
-        html: `<p>Editá archivos, después:</p><pre>git add .
-git commit -m "mi cambio"</pre>`,
-      },
-      {
-        title: "Paso 3 · Push",
-        html: `<p>Subilo al remoto:</p><pre>git push</pre><p>✅ Listo, tu cambio está en el origen.</p>`,
-      },
-    ],
-  },
-  shortcuts: {
-    title: "Atajos de VS Code",
-    blurb: "3 shortcuts que te cambian la vida.",
-    badge: "Productividad",
-    steps: [
-      {
-        title: "Paso 1 · Cmd+P",
-        html: `<p><strong>Cmd+P</strong> (Ctrl+P en Windows/Linux): buscar archivo por nombre. Rápido y fuzzy.</p>`,
-      },
-      {
-        title: "Paso 2 · Cmd+Shift+P",
-        html: `<p><strong>Cmd+Shift+P</strong>: paleta de comandos. Desde acá llegás a <em>cualquier</em> feature del editor sin recordar dónde está en los menús.</p>`,
-      },
-      {
-        title: "Paso 3 · Cmd+D",
-        html: `<p><strong>Cmd+D</strong>: selecciona la próxima ocurrencia de lo que tenés resaltado. Apretalo varias veces → multi-cursor instantáneo.</p><p>✅ Dominá estos tres y ya sos otro developer.</p>`,
-      },
-    ],
-  },
-};
+// La data vive en src/tutorials.json y se importa acá. Cada entrada tiene
+// id, title, blurb, badge, duration, steps[]. La vista se construye al vuelo
+// cuando el usuario hace clic.
+import tutorialsData from "./tutorials.json";
+const tutorials = tutorialsData;
+
 
 let floatingWin = null;
 let floatingKind = null; // "pip" | "popup" | "pip-meet"
@@ -175,12 +101,18 @@ Object.entries(tutorials)
     card.className = "card";
     card.innerHTML = `
       <h4></h4>
-      <p></p>
-      <span class="card-badge"></span>
+      <p class="card-blurb"></p>
+      <div class="card-meta">
+        <span class="card-badge"></span>
+        <span class="card-duration"></span>
+        <span class="card-steps"></span>
+      </div>
     `;
     card.querySelector("h4").textContent = data.title;
-    card.querySelector("p").textContent = data.blurb;
+    card.querySelector(".card-blurb").textContent = data.blurb;
     card.querySelector(".card-badge").textContent = data.badge;
+    card.querySelector(".card-duration").textContent = `⏱ ${data.duration}`;
+    card.querySelector(".card-steps").textContent = `📋 ${data.steps.length} pasos`;
     card.addEventListener("click", () => openPiPMeetStyle(data));
     gallery.appendChild(card);
   });
@@ -255,7 +187,16 @@ async function primeMediaSession(data) {
 // mete el nodo adentro. `mode`: "pip" (Document PiP simple), "pip-meet"
 // (Document PiP + audio/MediaSession), "popup" (window.open).
 async function openWindowWith(data, mode) {
-  if (floatingWin) { log("ya hay una ventana flotante abierta"); floatingWin.focus?.(); return; }
+  // Si ya hay una ventana abierta, swapeamos el contenido en vez de abrir
+  // otra. Más rápido y no rompe el always-on-top.
+  if (floatingWin && !floatingWin.closed) {
+    log(`swap de contenido → "${data.title}" en la ventana existente`, "evt");
+    const node = buildTutorialNode(data);
+    floatingWin.document.body.replaceChildren(node);
+    floatingWin.document.title = data.title;
+    floatingWin.focus?.();
+    return;
+  }
 
   const node = buildTutorialNode(data);
   let audio = null;

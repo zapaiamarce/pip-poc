@@ -106,6 +106,14 @@ main {
 .card:active { transform: translateY(1px); }
 .card h4 { margin: 0 0 .4rem; font-size: 1rem; }
 .card p { margin: 0; color: var(--fg-dim); font-size: .85rem; }
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .75rem;
+  font-size: .75rem;
+  color: var(--fg-dim);
+}
 .card-badge {
   display: inline-block;
   font-size: .7rem;
@@ -113,7 +121,11 @@ main {
   background: rgba(124,156,255,.1);
   padding: 2px 8px;
   border-radius: 999px;
-  margin-top: .6rem;
+}
+.card-duration, .card-steps {
+  padding: 2px 8px;
+  background: rgba(255,255,255,.04);
+  border-radius: 999px;
 }
 
 .log-panel {
