@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document PiP POC</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>Document Picture-in-Picture — POC</h1>
+      <p class="subtitle">
+        Hacé clic en "Abrir en ventana flotante" para que el tutorial te siga
+        mientras cambiás de tab o ventana.
+      </p>
+      <p id="support-warning" class="warning" hidden>
+        ⚠️ Tu navegador no soporta Document Picture-in-Picture. Probá en Chrome,
+        Edge, Opera o Arc (desktop).
+      </p>
+    </header>
+
+    <main>
+      <!-- Audio silencioso en loop: sirve como "media playing" para que el
+           browser considere a la tab como app de media, igual que Meet con
+           getUserMedia. Requisito habitual para que Automatic PiP y algunos
+           privilegios de ventana funcionen. -->
+      <!-- Audio silencioso. El <source> apunta a un archivo real generado en
+           /public para evitar el problema de loops sobre data-URI de 0 bytes. -->
+      <audio id="silent-audio" loop preload="auto"></audio>
+
+      <section id="host" class="host">
+        <!-- El tutorial vive acá; se mueve a la PiP window y vuelve al cerrarse. -->
+        <article id="tutorial" class="tutorial">
+          <div class="tutorial-head">
+            <h2 id="step-title">Paso 1 · Introducción</h2>
+            <span id="step-indicator" class="indicator">1 / 3</span>
+          </div>
+
+          <div id="step-body" class="step-body">
+            <p>
+              Bienvenido al tutorial de prueba. Esta ventana puede despegarse y
+              quedar siempre visible encima de cualquier otra aplicación.
+            </p>
+            <p>
+              Cuando estés listo, apretá <strong>Siguiente</strong>.
+            </p>
+          </div>
+
+          <div class="tutorial-controls">
+            <button id="prev-btn" type="button">← Anterior</button>
+            <button id="next-btn" type="button">Siguiente →</button>
+          </div>
+
+          <div class="tutorial-footer">
+            <button id="pip-btn" type="button" class="primary">
+              📌 Abrir en PiP
+            </button>
+            <button id="popup-btn" type="button">
+              🪟 Abrir como popup (window.open)
+            </button>
+            <button id="pip-meet-btn" type="button">
+              🎵 Abrir PiP al estilo Meet (audio + MediaSession)
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="playground">
+        <h3>Zona de prueba</h3>
+        <p>
+          Abrí el tutorial en PiP y después cambiá a otra tab o ventana.
+          La ventanita debería seguir visible.
+        </p>
+
+        <div class="log-panel">
+          <div class="log-head">
+            <strong>Logs</strong>
+            <button id="log-clear" type="button">Limpiar</button>
+          </div>
+          <pre id="log"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
